@@ -1,0 +1,20 @@
+
+branches:
+  only:
+  - production
+
+jobs:
+  include:
+    - stage: install&build
+      env:
+        - NODE_VERSION="10.15.3"
+      before_install:
+        - sudo apt-get install python-dev
+        - nvm install $NODE_VERSION
+      language: python
+      python:
+        - '3.5'
+      script:
+        - npm install && npm run build
+        - pip install oss2
+        - python ./deploy.py
