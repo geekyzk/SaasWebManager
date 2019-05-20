@@ -17,11 +17,11 @@ router.beforeEach((to, from, next) => {
         store.dispatch('GetBusinessConfig')
       }
       // next()
-      
+
       if (store.getters.userInfo === '') {
         store.dispatch('GetInfo').then(res => { // 拉取用户信息
-          store.commit('SET_HAS_BUSINESS_ADMIN',res.isBusinessAdmin)
-        }).then(()=> {
+          store.commit('SET_HAS_BUSINESS_ADMIN', res.isBusinessAdmin)
+        }).then(() => {
           next({ ...to, replace: true })
         }).catch((err) => {
           store.dispatch('FedLogOut').then(() => {

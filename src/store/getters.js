@@ -31,7 +31,6 @@ const getters = {
         return true
       }
     }
-    
   }
 }
 export default getters

@@ -47,7 +47,7 @@ const user = {
         state.permissionNames = permissionNames
       }
     },
-    SET_HAS_BUSINESS_ADMIN:(state, isAdmin) => {
+    SET_HAS_BUSINESS_ADMIN: (state, isAdmin) => {
       state.hasBusinessAdmin = isAdmin
     },
     SET_BUSINESS_CONFIG: (state) => {

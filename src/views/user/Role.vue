@@ -228,8 +228,8 @@ export default {
           name: retriveData.name,
           id: retriveData.id,
           permissionIds: retriveData.permissions.map(item => {
-              return item.id
-            })
+            return item.id
+          })
         }
         this.dialogStatus = 'update'
         this.dialogFormVisible = true
@@ -237,7 +237,6 @@ export default {
           this.$refs['roleForm'].clearValidate()
         })
       })
-      
     },
     updateData() {
       this.$refs['roleForm'].validate((valid) => {
