@@ -15,6 +15,6 @@ jobs:
       python:
         - '3.5'
       script:
-        - npm install && npm run build
+        - npm install && npm run build:prod
         - pip install oss2
         - python ./deploy.py
