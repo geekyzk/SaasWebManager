@@ -1,7 +1,7 @@
 import { login } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { queryUserInfo } from '@/api/UserApi'
-import { listBusinessConfig } from '@/api/BusinessCOnfigApi'
+import { listBusinessConfig } from '@/api/BusinessConfigApi'
 
 const user = {
   state: {
