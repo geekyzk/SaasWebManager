@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-export function login(username, password, rememberMe) {
+export function login(businessCode, username, password, rememberMe) {
   return request({
     url: '/api/authenticate',
     method: 'post',
@@ -8,7 +8,7 @@ export function login(username, password, rememberMe) {
       username,
       password,
       rememberMe,
-      loginType: 'memory'
+      businessCode
     },
     baseURL: process.env.BASE_API
   })

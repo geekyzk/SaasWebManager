@@ -1,7 +1,13 @@
 <template>
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-      <h3 class="title">vue-admin-template</h3>
+      <h3 class="title">后台管理平台</h3>
+      <el-form-item prop="businessCode">
+        <span class="svg-container">
+          <svg-icon icon-class="user" />
+        </span>
+        <el-input v-model="loginForm.businessCode" name="businessCode" type="text" auto-complete="on" placeholder="businessCode" />
+      </el-form-item>
       <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
@@ -46,10 +52,12 @@ export default {
     }
     return {
       loginForm: {
+        businessCode: 'admin',
         username: 'admin@admin.com',
-        password: '123456'
+        password: '123'
       },
       loginRules: {
+        businessCode: [{ required: true, trigger: 'blur' }],
         username: [{ required: true, trigger: 'blur' }],
         password: [{ required: true, trigger: 'blur', validator: validatePass }]
       },

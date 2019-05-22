@@ -62,7 +62,7 @@ const user = {
     Login({ commit }, userInfo) {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
-        login(username, userInfo.password, false).then(response => {
+        login(userInfo.businessCode, username, userInfo.password, false).then(response => {
           const data = response.data.data
           setToken(data.token)
           commit('SET_TOKEN', data.token)

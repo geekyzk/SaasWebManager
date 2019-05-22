@@ -4,7 +4,7 @@ const getters = {
   sidebar: state => state.app.sidebar,
   device: state => state.app.device,
   token: state => state.user.token,
-  avatar: state => state.user.avatar,
+  avatar: state => state.user.userInfo.imageUrl,
   name: state => state.user.name,
   userInfo: state => state.user.userInfo,
   businessConfig: state => state.user.businessConfig,
@@ -19,17 +19,10 @@ const getters = {
   permissions: (state) => state.user.permissions,
   permissionNames: (state) => state.user.permissionNames,
   checkUserPermissions: (state) => (name) => {
-    console.log('判断权限')
-    console.log('------' + state.user.hasBusinessAdmin)
-    console.log('判断权限')
-    if (store.getters.userInfo.isBusinessAdmin) {
-      return true
+    if (state.user.permissionNames.indexOf(name) === -1 && state.user.permissionNames.indexOf('ROLE_PLATFORM_ADMIN') === -1) {
+      return false
     } else {
-      if (store.getters.permissionNames.indexOf(name) === -1) {
-        return false
-      } else {
-        return true
-      }
+      return true
     }
   }
 }

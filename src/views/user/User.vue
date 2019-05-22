@@ -265,13 +265,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['hasBusinessAdmin'])
+    ...mapGetters(['checkUserPermissions'])
   },
   created() {
     this.list()
   },
   methods: {
     list() {
+      
       const params = {
         page: this.listParams.page,
         size: this.listParams.size,
@@ -301,9 +302,12 @@ export default {
       this.dialogDetailVisible = true
     },
     initRoleList() {
-      listRole({ size: 100 }).then(resp => {
-        this.roleData = resp.data.data
-      })
+      if (this.store.getter('QUERY_ROLE')) {
+        listRole({ size: 100 }).then(resp => {
+          this.roleData = resp.data.data
+        })
+      }
+      
     },
     resetuserTemp() {
       this.userTemp = {

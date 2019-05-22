@@ -5,7 +5,7 @@
       <el-row :gutter="10">
         <el-form>
           <el-col :span="2">
-            <el-button class="filter-item" style="width:100%;padding: 10px 0px;" type="primary" icon="el-icon-plus" @click="handleCreate">{{ $t('table.add') }}</el-button>
+            <el-button :disabled="!checkUserPermissions('CREATE_ROLE')" class="filter-item" style="width:100%;padding: 10px 0px;" type="primary" icon="el-icon-plus" @click="handleCreate">{{ $t('table.add') }}</el-button>
           </el-col>
         </el-form>
       </el-row>
@@ -16,8 +16,8 @@
           <!-- 操作 -->
           <el-table-column :label="$t('table.actions')" align="center" width="80px" class-name="small-padding fixed-width">
             <template slot-scope="scope">
-              <el-button type="text" title="编辑" @click="handleUpdate(scope.row)"><i class="el-icon-edit"/></el-button>
-              <el-button type="text" title="删除" @click="deleteData(scope.row.id)"><i class="el-icon-delete"/></el-button>
+              <el-button type="text" :disabled="!checkUserPermissions('UPDATE_ROLE')" title="编辑" @click="handleUpdate(scope.row)"><i class="el-icon-edit"/></el-button>
+              <el-button type="text" :disabled="!checkUserPermissions('DELETE_ROLE')" title="删除" @click="deleteData(scope.row.id)"><i class="el-icon-delete"/></el-button>
             </template>
           </el-table-column>
           <el-table-column type="index" align="center" width="50"/>
@@ -134,25 +134,29 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['hasBusinessAdmin'])
+    
   },
   created() {
     this.list()
     this.initPermissionData()
   },
   methods: {
+    ...mapGetters(['checkUserPermissions']),
     list() {
-      const params = {
+      console.log(this.$store.getters.checkUserPermissions('QUERY_ROLE'))
+      if (this.$store.getters.checkUserPermissions('ROLE_QUERY_ROLE')) {
+        const params = {
         page: this.listParams.page,
         size: this.listParams.size,
         'sort': this.listParams['sort'] === '' ? null : this.listParams['sort']
+        }
+        this.loading = true
+        listRole(params).then(response => {
+          this.loading = false
+          this.data = response.data.data
+          this.total = response.data.totalSize
+        })
       }
-      this.loading = true
-      listRole(params).then(response => {
-        this.loading = false
-        this.data = response.data.data
-        this.total = response.data.totalSize
-      })
     },
     sortSignTime(column) {
       if (column.order === 'ascending') {
