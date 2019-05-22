@@ -17,7 +17,7 @@ def listFiles(path):
     if os.path.isfile(path):
       filesPath.append(path)
     else:
-      filesPath.append(listFiles(path))
+      listFiles(path)
   return filesPath
 root_path = os.path.join(os.getcwd(),'dist')
 files = listFiles(root_path)
