@@ -2,12 +2,6 @@
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
       <h3 class="title">后台管理平台</h3>
-      <el-form-item prop="businessCode">
-        <span class="svg-container">
-          <svg-icon icon-class="user" />
-        </span>
-        <el-input v-model="loginForm.businessCode" name="businessCode" type="text" auto-complete="on" placeholder="businessCode" />
-      </el-form-item>
       <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
