@@ -66,28 +66,28 @@ export const constantRouterMap = [
   {
     path: '/shop',
     component: Layout,
-    redirect: '/shop/image_config',
+    redirect: '/shop/shop_store',
     name: 'shop',
     meta: { title: '店铺配置', icon: 'example' },
     children: [
-      {
-        path: 'image_config',
-        name: 'imageConfig',
-        component: () => import('@/views/shopstoreimageconfig/ShopStoreImageConfig'),
-        meta: { title: '图片配置', icon: 'table' }
-      },
+      // {
+      //   path: 'image_config',
+      //   name: 'imageConfig',
+      //   component: () => import('@/views/shopstoreimageconfig/ShopStoreImageConfig'),
+      //   meta: { title: '图片配置', icon: 'table' }
+      // },
       {
         path: 'shop_store',
         name: 'shopStore',
         component: () => import('@/views/shopstore/ShopStore'),
         meta: { title: '自提门店', icon: 'tree' }
-      },
-      {
-        path: 'wechat',
-        name: 'wechat',
-        component: () => import('@/views/wechatinfo/WechatInfo'),
-        meta: { title: '微信配置', icon: 'tree' }
       }
+      // {
+      //   path: 'wechat',
+      //   name: 'wechat',
+      //   component: () => import('@/views/wechatinfo/WechatInfo'),
+      //   meta: { title: '微信配置', icon: 'tree' }
+      // }
     ]
   },
   {

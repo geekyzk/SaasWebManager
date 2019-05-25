@@ -5,7 +5,7 @@
       <el-row :gutter="10">
         <el-form>
           <el-col :span="2">
-            <el-button class="filter-item" style="width:100%;padding: 10px 0px;" type="primary" icon="el-icon-plus" @click="handleCreate">{{ $t('table.add') }}</el-button>
+            <el-button  class="filter-item" style="width:100%;padding: 10px 0px;" type="primary" icon="el-icon-plus" @click="handleCreate">{{ $t('table.add') }}</el-button>
           </el-col>
           <el-col :span="2">
             <el-button :disabled="total == 0" :loading="downloadLoading" type="primary" style="width:100%;padding: 10px 0px;" icon="el-icon-download" @click="handleDownload">{{ $t('table.export') }}</el-button>
@@ -22,8 +22,8 @@
           <!-- 操作 -->
           <el-table-column :label="$t('table.actions')" align="center" width="120px" class-name="small-padding fixed-width">
             <template slot-scope="scope">
-              <el-button type="text" title="编辑" @click="handleUpdate(scope.row)"><i class="el-icon-edit"/></el-button>
-              <el-button :disabled="!hasBusinessAdmin" type="text" title="修改密码" @click="handleChangePassword(scope.row.id)"><i class="el-icon-key"/></el-button>
+              <el-button  type="text" title="编辑" @click="handleUpdate(scope.row)"><i class="el-icon-edit"/></el-button>
+              <el-button :disabled="!checkUserPermissions('ROLE_PLATFORM_ADMIN')" type="text" title="修改密码" @click="handleChangePassword(scope.row.id)"><i class="el-icon-key"/></el-button>
               <el-button type="text" title="删除" @click="deleteData(scope.row.id)"><i class="el-icon-delete"/></el-button>
             </template>
           </el-table-column>
@@ -302,12 +302,9 @@ export default {
       this.dialogDetailVisible = true
     },
     initRoleList() {
-      if (this.store.getter('QUERY_ROLE')) {
-        listRole({ size: 100 }).then(resp => {
-          this.roleData = resp.data.data
-        })
-      }
-      
+      listRole({ size: 100 }).then(resp => {
+        this.roleData = resp.data.data
+      })
     },
     resetuserTemp() {
       this.userTemp = {

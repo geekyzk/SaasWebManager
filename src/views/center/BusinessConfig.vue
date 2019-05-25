@@ -7,23 +7,32 @@
             <span>{{ businessConfig.name }}</span>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <!-- <el-col :span="12">
           <el-col :span="12">
-            <el-button size="small" >配置商店</el-button>
+            <el-button size="small"  @click="handleEditBusiness">配置商店</el-button>
           </el-col>
-        </el-col>
+        </el-col> -->
       </el-row>
       <el-form-item label="商店名称">
         <span>{{ businessConfig.shopName }}</span>
       </el-form-item>
       <el-form-item label="LOGO" style="height:200px">
         <!-- <ImageUpload v-model="businessConfig.logo" ></ImageUpload> -->
-        <img :src="businessConfig.logo" alt="" style="width:178px;height:178px">
+        <el-upload
+          :action="uploadParams.actionUrl"
+          :headers="uploadParams.headers"
+          :show-file-list="false"
+          :on-success="handleAvatarSuccess"
+          :before-upload="beforeAvatarUpload"
+          class="avatar-uploader">
+          <img v-if="businessLogo" :src="realStaticUrl(businessLogo)" class="avatar">
+          <i v-else class="el-icon-plus avatar-uploader-icon"/>
+        </el-upload>
       </el-form-item>
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="公众号">
-            <span v-if="wechatInfo !== ''">{{ wechatInfo.name }}</span>
+            <span v-if="wechatInfo !== '' && wechatInfo !== undefined  ">{{ wechatInfo.name }}</span>
             <span v-else>请先设置公众号信息</span>
           </el-form-item>
         </el-col>
@@ -36,10 +45,9 @@
         <span>{{ businessConfig.createAt }}</span>
       </el-form-item>
     </el-form>
-
     <el-dialog :visible.sync="dialogWeChatFormVisible" title="微信设置" width="60%" top="7vh">
       <el-form ref="wechatInfoForm" :model="wechatInfo" :rules="rules" class="form-add" label-width="100px" style="width: 100%; padding-left:10px;padding-right:10px">
-        <el-form-item label="微信名称" prop="name">
+        <el-form-item label="微信名称">
           <el-input v-model="wechatInfo.name" style="width:100%"/>
         </el-form-item>
         <el-form-item label="AppId" prop="appId">
@@ -78,7 +86,10 @@
 
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
+import { realStaticUrl, uploadParams } from '@/utils'
 import { listWechatInfo, createWechatInfo, updateWechatInfo } from '@/api/WechatInfoApi'
+import { updateBusinessConfig } from '@/api/BusinessConfigApi'
+
 export default {
   components: {
 
@@ -96,10 +107,15 @@ export default {
         resource: '',
         desc: ''
       },
+      uploadParams: uploadParams(),
       buttonLoading: false,
-      wechatInfo: {},
+      wechatInfo: {
+        name: undefined
+      },
+      businessLogo: undefined,
       dialogWeChatStatus: '',
       dialogWeChatFormVisible: false,
+      dialogBusinessVisible: false,
       rules: {
         token: [{ required: true, message: 'token为必须参数', trigger: 'change' }],
         aesKey: [{ required: true, message: 'aesKey为必须参数', trigger: 'change' }],
@@ -114,10 +130,17 @@ export default {
   },
   created() {
     listWechatInfo({ size: 1 }).then(resp => {
-      this.wechatInfo = resp.data.data[0]
+      if (resp.data.data[0] === undefined) {
+        this.wechatInfo = {}
+      } else {
+        this.wechatInfo = resp.data.data[0]
+      }
+      // this.wechatInfo = resp.data.data[0]
     })
+    this.businessLogo = this.businessConfig.logo
   },
   methods: {
+    realStaticUrl,
     onSubmit() {
       console.log('submit!')
     },
@@ -128,6 +151,9 @@ export default {
         this.dialogWeChatStatus = 'update'
       }
       this.dialogWeChatFormVisible = true
+    },
+    handleEditBusiness() {
+      this.dialogBusinessVisible = true
     },
     createData() {
       this.$refs['wechatInfoForm'].validate((valid) => {
@@ -160,6 +186,19 @@ export default {
           })
         }
       })
+    },
+    handleAvatarSuccess(res, file) {
+      this.businessLogo = res.data.url
+      updateBusinessConfig(this.businessConfig.id, {logo: res.data.url}).then(resp => {
+        console.log(resp)
+      })
+    },
+    beforeAvatarUpload(file) {
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isLt2M) {
+        this.$message.error('上传图片大小不能超过 2MB!')
+      }
+      return isLt2M
     },
     updateData() {
       this.$refs['wechatInfoForm'].validate((valid) => {
@@ -208,4 +247,9 @@ export default {
   right: 0;
   bottom: 0;
 }
+.avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
 </style>

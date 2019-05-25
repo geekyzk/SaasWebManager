@@ -137,7 +137,7 @@
     </el-row>
 
     <!-- 对话框 -->
-    <el-dialog :title="textMap[dialogStatus]" :visible="dialogFormVisible" width="60%" top="7vh" @opened="initDialogInfo">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="60%" top="7vh" @opened="initDialogInfo">
       <el-form ref="goodsForm" :model="goodsTemp" :rules="rules" class="form-add" label-width="100px" style="width: 100%; padding-left:10px;padding-right:10px">
         <el-row :gutter="20">
           <el-col :span="8">
