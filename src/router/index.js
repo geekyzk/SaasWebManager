@@ -82,12 +82,6 @@ export const constantRouterMap = [
         component: () => import('@/views/shopstore/ShopStore'),
         meta: { title: '自提门店', icon: 'tree' }
       }
-      // {
-      //   path: 'wechat',
-      //   name: 'wechat',
-      //   component: () => import('@/views/wechatinfo/WechatInfo'),
-      //   meta: { title: '微信配置', icon: 'tree' }
-      // }
     ]
   },
   {
@@ -129,6 +123,21 @@ export const constantRouterMap = [
         name: 'role',
         component: () => import('@/views/user/Role'),
         meta: { title: '角色管理', icon: 'table' }
+      }
+    ]
+  },
+  {
+    path: '/chat',
+    component: Layout,
+    redirect: '/chat/index',
+    name: 'chat',
+    meta: { title: '客服管理', icon: 'example' },
+    children: [
+      {
+        path: 'index',
+        name: 'userChat',
+        component: () => import('@/views/userchat/UserChat'),
+        meta: { title: '客户服务', icon: 'tree' }
       }
     ]
   },
