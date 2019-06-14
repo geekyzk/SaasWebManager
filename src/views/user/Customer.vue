@@ -18,62 +18,25 @@
     </div>
     <el-row>
       <div class="chart-container">
-        <el-table v-loading="loading" ref="UserTable" :data="data" border fit highlight-current-row style="width: 100%;" @sort-change="sortSignTime" @row-dblclick="openDetails">
-          <!-- 操作 -->
-          <!-- <el-table-column align="center" :label="$t('table.actions')" width="120px" class-name="small-padding fixed-width">
-            <template slot-scope="scope">
-              <el-button type="text" title="编辑"  @click="handleUpdate(scope.row)"><i class="el-icon-edit"></i></el-button>
-              <el-button :disabled="!hasBusinessAdmin" type="text" title="删除"  @click="deleteData(scope.row.id)"><i class="el-icon-delete"></i></el-button>
-              <el-button type="text" title="删除"  @click="deleteData(scope.row.id)"><i class="el-icon-delete"></i></el-button>
-            </template>
-          </el-table-column> -->
+        <el-table v-loading="loading" ref="UserTable" :data="data" border fit highlight-current-row style="width: 100%;" @sort-change="sortSignTime" >
           <el-table-column type="index" align="center" width="50"/>
-          <el-table-column prop="nickName" label="昵称" align="center" >
-            <template slot-scope="scope">
-              {{ scope.row.nickName }}
-            </template>
-          </el-table-column>
+          <el-table-column prop="nickName" label="昵称" align="center" > </el-table-column>
           <el-table-column prop="imageUrl" label="头像" align="center" >
             <template slot-scope="scope">
               <img :src="scope.row.imageUrl" alt="" style="width:50px;height:50px;">
             </template>
           </el-table-column>
-          <!-- <el-table-column prop="phone" label="手机" align="center" >
-            <template slot-scope="scope">
-              {{ scope.row.phone }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="email" label="邮箱" align="center" >
-            <template slot-scope="scope">
-              {{ scope.row.email }}
-            </template>
-          </el-table-column> -->
-          <!-- <el-table-column prop="activated" label="激活" align="center" >
-            <template slot-scope="scope">
-              <BooleanTag v-model='scope.row.activated'></BooleanTag>
-            </template>
-          </el-table-column> -->
-          <!-- <el-table-column prop="userType" label="用户类型" align="center" :sortable="'custom'">
-            <template slot-scope="scope">
-              {{ scope.row.userType }}
-            </template>
-          </el-table-column> -->
-          <!-- <el-table-column prop="openId" label="微信OpenId" align="center" :sortable="'custom'">
-            <template slot-scope="scope">
-              {{ scope.row.openId }}
-            </template>
-          </el-table-column> -->
-          <el-table-column :sortable="'custom'" prop="createAt" label="创建时间" align="center">
-            <template slot-scope="scope">
-              {{ scope.row.createAt | formatDate }}
-            </template>
-          </el-table-column>
-          <el-table-column :sortable="'custom'" prop="updateAt" label="更新时间" align="center">
-            <template slot-scope="scope">
-              {{ scope.row.updateAt | formatDate }}
-            </template>
-          </el-table-column>
-        </el-table>
+          <!-- <el-table-column :sortable="'custom'" prop="createAt" label="创建时间" align="center" :formatter="tableDataFormat"> </el-table-column> -->
+          <el-table-column :sortable="'custom'" prop="updateAt" label="更新时间" align="center" :formatter="tableDataFormat"> </el-table-column>
+					<el-table-column align="center">
+						<templte slot-scope="scope">
+							 <el-button
+								size="mini"
+								type="danger"
+								@click="openDetails(scope.row)">详情</el-button>
+						</templte>
+					</el-table-column>
+				</el-table>
       </div>
       <!-- 分页 -->
       <div class="pagination-container">
@@ -163,8 +126,8 @@ import { listUser, createUser, updateUser, deleteUser } from '@/api/UserApi'
 import waves from '@/directive/waves'
 import { formatDate } from '@/utils'
 import { mapGetters } from 'vuex'
-import ContactUser from '../contactuser/ContactUser'
-import UserAddress from '../useraddress/UserAddress'
+import ContactUser from './components/ContactUser'
+import UserAddress from './components/UserAddress'
 import OrderInfo from '../OrderManager/OrderInfo'
 
 export default {
@@ -173,9 +136,9 @@ export default {
     waves
   },
   components: {
-    [ContactUser.name]: ContactUser,
-    [UserAddress.name]: UserAddress,
-    [OrderInfo.name]: OrderInfo
+    ContactUser,
+    UserAddress,
+    OrderInfo
   },
   data() {
     return {
@@ -265,6 +228,9 @@ export default {
         this.hackReset = true
       })
     },
+		tableDataFormat(row, column, cellValue, index) {
+			return formatDate(cellValue)
+		},
     resetuserTemp() {
       this.userTemp = {
         nickName: undefined,

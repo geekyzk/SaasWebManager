@@ -38,88 +38,25 @@
             </template>
           </el-table-column>
           <el-table-column type="index" align="center" width="50"/>
-          <el-table-column prop="name" label="商品名称" align="center" >
-            <template slot-scope="scope">
-              {{ scope.row.name }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="clickNum" label="点击数" align="center">
-            <template slot-scope="scope">
-              {{ scope.row.clickNum }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="goodsSn" label="商品编号" align="center">
-            <template slot-scope="scope">
-              {{ scope.row.goodsSn }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="soldNum" label="销售量" align="center">
-            <template slot-scope="scope">
-              {{ scope.row.soldNum }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="goodsNum" label="库存数" align="center">
-            <template slot-scope="scope">
-              {{ scope.row.goodsNum }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="marketPrice" label="市场价格" align="center">
-            <template slot-scope="scope">
-              {{ scope.row.marketPrice }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="shopPrice" label="本店价格" align="center">
-            <template slot-scope="scope">
-              {{ scope.row.shopPrice }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="sourcePrice" label="进货价" align="center">
-            <template slot-scope="scope">
-              {{ scope.row.sourcePrice }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="goodsBrief" label="简要描述" align="center">
-            <template slot-scope="scope">
-              {{ scope.row.goodsBrief }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="shipFree" label="是否免邮" align="center">
+					<el-table-column prop="showImage" align="center">
+					  <template slot-scope="scope">
+					    <img :src="realStaticUrl(scope.row.showImage)" alt="" style="width: 50px;height:50px;">
+					  </template>
+					</el-table-column>
+          <el-table-column prop="name" label="名称" align="center" > </el-table-column>
+          <el-table-column prop="goodsSn" label="编号" align="center"> </el-table-column>
+          <el-table-column prop="soldNum" label="销售量" align="center"> </el-table-column>
+          <el-table-column prop="goodsNum" label="库存数" align="center"> </el-table-column>
+          <el-table-column prop="marketPrice" label="市场价格" align="center" :formatter="priceFormat"> </el-table-column>
+          <el-table-column prop="shopPrice" label="本店价格" align="center" :formatter="priceFormat"> </el-table-column>
+          <el-table-column prop="sourcePrice" label="进货价" align="center" :formatter="priceFormat"> </el-table-column>
+          <el-table-column prop="goodsBrief" label="简要描述" align="center"> </el-table-column>
+          <el-table-column prop="shipFree" label="免邮" align="center">
             <template slot-scope="scope">
               <BooleanTag v-model="scope.row.shipFree"/>
             </template>
           </el-table-column>
-          <el-table-column prop="showImage" label="封面图片" align="center">
-            <template slot-scope="scope">
-              <span>
-                <img :src="realStaticUrl(scope.row.showImage)" alt="" style="width: 50px;height:50px;">
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="goodsDesc" label="商品介绍" align="center">
-            <template slot-scope="scope">
-              {{ scope.row.goodsDesc }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="isNew" label="是否新品" align="center">
-            <template slot-scope="scope">
-              <BooleanTag v-model="scope.row.isNew"/>
-            </template>
-          </el-table-column>
-          <el-table-column prop="isHot" label="是否热门" align="center">
-            <template slot-scope="scope">
-              <BooleanTag v-model="scope.row.isHot"/>
-            </template>
-          </el-table-column>
-          <el-table-column prop="createAt" label="创建时间" align="center">
-            <template slot-scope="scope">
-              {{ scope.row.createAt | formatDate }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="updateAt" label="更新时间" align="center">
-            <template slot-scope="scope">
-              {{ scope.row.updateAt | formatDate }}
-            </template>
-          </el-table-column>
+          <el-table-column prop="updateAt" label="更新时间" width="160px" align="center" :formatter="dateFormat"> </el-table-column>
         </el-table>
       </div>
       <!-- 分页 -->
@@ -176,12 +113,12 @@
           </el-col>
         </el-row>
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="库存数" prop="goodsNum">
               <el-input-number v-model="goodsTemp.goodsNum" style="width:100%"/>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="销售量" prop="soldNum">
               <el-input-number v-model="goodsTemp.soldNum" style="width:100%"/>
             </el-form-item>
@@ -225,7 +162,6 @@
             <i v-else class="el-icon-plus avatar-uploader-icon"/>
           </el-upload>
         </el-form-item>
-
         <el-form-item label="轮播图片" prop="goodsImages">
           <el-upload
             :action="uploadParams.actionUrl"
@@ -254,58 +190,6 @@
     </el-dialog>
     <el-dialog :visible.sync="dialogVisible">
       <img :src="dialogImageUrl" width="100%" alt="">
-    </el-dialog>
-    <el-dialog :visible.sync="dialogDetailVisible" title="详情" width="40%" top="7vh" style="width: 100%; padding-left:10px;padding-right:10px">
-      <el-form ref="form" :model="showData" label-width="90px" label-position="left" style="padding-left: 20px">
-        <el-form-item label="商品名称">
-          <span> {{ showData.name }}</span>
-        </el-form-item >
-        <el-form-item label="点击数">
-          <span> {{ showData.clickNum }}</span>
-        </el-form-item >
-        <el-form-item label="商品编号">
-          <span> {{ showData.goodsSn }}</span>
-        </el-form-item >
-        <el-form-item label="销售量">
-          <span> {{ showData.soldNum }}</span>
-        </el-form-item >
-        <el-form-item label="库存数">
-          <span> {{ showData.goodsNum }}</span>
-        </el-form-item >
-        <el-form-item label="市场价格">
-          <span> {{ showData.marketPrice }}</span>
-        </el-form-item >
-        <el-form-item label="本店价格">
-          <span> {{ showData.shopPrice }}</span>
-        </el-form-item >
-        <el-form-item label="进货价">
-          <span> {{ showData.sourcePrice }}</span>
-        </el-form-item >
-        <el-form-item label="商品简要描述">
-          <span> {{ showData.goodsBrief }}</span>
-        </el-form-item >
-        <el-form-item label="是否免邮">
-          <span> {{ showData.shipFree }}</span>
-        </el-form-item >
-        <el-form-item label="封面图片">
-          <span> {{ showData.showImage }}</span>
-        </el-form-item >
-        <el-form-item label="商品介绍">
-          <span> {{ showData.goodsDesc }}</span>
-        </el-form-item >
-        <el-form-item label="是否新品">
-          <span> {{ showData.isNew }}</span>
-        </el-form-item >
-        <el-form-item label="是否热门">
-          <span> {{ showData.isHot }}</span>
-        </el-form-item >
-        <el-form-item label="创建时间">
-          <span>{{ showData.createAt | formatDate }}</span>
-        </el-form-item>
-        <el-form-item label="更新时间">
-          <span>{{ showData.updateAt | formatDate }}</span>
-        </el-form-item>
-      </el-form>
     </el-dialog>
   </div>
 </template>
@@ -456,13 +340,18 @@ export default {
       }
     },
     initDialogInfo() {
-      console.log(this.$refs)
       this.initEdit()
     },
     openDetails(row) {
       this.showData = row
       this.dialogDetailVisible = true
     },
+		priceFormat(row,column,cellValue,index) {
+			return cellValue/100
+		},
+		dateFormat(row,column,cellValue,index) {
+			return formatDate(cellValue)
+		},
     resetgoodsTemp() {
       this.goodsTemp = {
         goodsImages: [],
@@ -535,7 +424,6 @@ export default {
       })
     },
     handleAvatarSuccess(res, file) {
-      console.log(res)
       this.goodsTemp.showImage = res.data.url
     },
     beforeAvatarUpload(file) {
@@ -548,16 +436,16 @@ export default {
     },
     handleRemove(file, fileList) {
       this.fileListTemp = this.fileListTemp.filter(item => item !== file.name)
+			this.fileList = this.fileList.filter(item => item.name !== file.name)
     },
     handlePictureCardPreview(file) {
-      console.log(file)
       this.dialogImageUrl = file.url
       this.dialogVisible = true
     },
-    handlePictureCardSuccess(resp, file, fileList) {
+    handlePictureCardSuccess(resp, file, fileList) {	
       this.fileListTemp.push(resp.data.url)
       this.fileList.push({ url: realStaticUrl(resp.data.url), uid: resp.data.url, name: resp.data.url })
-    },
+		},
     handleUpdate(row) {
       retrieveGoods(row.id).then(resp => {
         this.goodsTemp = resp.data

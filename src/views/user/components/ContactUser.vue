@@ -11,12 +11,23 @@
             <el-button :disabled="total == 0" :loading="downloadLoading" type="primary" style="width:100%;padding: 10px 0px;" icon="el-icon-download" @click="handleDownload">{{ $t('table.export') }}</el-button>
           </el-col>
           <el-col :span="4">
-            <el-form-item label="类别名称" label-width="80px">
+            <el-form-item label="用户名" label-width="80px">
               <el-input
-                v-model="listParams['name.equals']"
+                v-model="listParams['username.equals']"
                 style="width: 100%;"
                 class="filter-item"
-                placeholder="类别名称"
+                placeholder="用户名"
+                @keyup.enter.native="handleFilter"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item label="手机" label-width="80px">
+              <el-input
+                v-model="listParams['phone.equals']"
+                style="width: 100%;"
+                class="filter-item"
+                placeholder="手机"
                 @keyup.enter.native="handleFilter"
               />
             </el-form-item>
@@ -29,7 +40,7 @@
     </div>
     <el-row>
       <div class="chart-container">
-        <el-table v-loading="loading" ref="GoodsCategoryTable" :data="data" border fit highlight-current-row style="width: 100%;" @sort-change="sortSignTime">
+        <el-table v-loading="loading" ref="ContactUserTable" :data="data" border fit highlight-current-row style="width: 100%;" @sort-change="sortSignTime" @row-dblclick="openDetails">
           <!-- 操作 -->
           <el-table-column :label="$t('table.actions')" align="center" width="80px" class-name="small-padding fixed-width">
             <template slot-scope="scope">
@@ -38,37 +49,22 @@
             </template>
           </el-table-column>
           <el-table-column type="index" align="center" width="50"/>
-          <el-table-column prop="name" label="类别名称" align="center">
+          <el-table-column :sortable="'custom'" prop="username" label="用户名" align="center">
             <template slot-scope="scope">
-              {{ scope.row.name }}
+              {{ scope.row.username }}
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="首页展示" align="center">
+          <el-table-column :sortable="'custom'" prop="phone" label="手机" align="center">
             <template slot-scope="scope">
-              <BooleanTag :tag-value="scope.row.showIndex"/>
+              {{ scope.row.phone }}
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="logo" align="center">
-            <template slot-scope="scope">
-              <img v-show="scope.row.showIndex" :src="scope.row.image" style="width: 50px;height:50px;">
-            </template>
-          </el-table-column>
-         <!-- <el-table-column prop="name" label="首页布局" align="center">
-            <template slot-scope="scope">
-              {{ scope.row.indexLayout ? scope.row.indexLayout.label : '' }}
-            </template>
-          </el-table-column> -->
-          <el-table-column prop="desc" label="类别描述" align="center">
-            <template slot-scope="scope">
-              {{ scope.row.remark }}
-            </template>
-          </el-table-column>
-         <!-- <el-table-column prop="createAt" label="创建时间" align="center">
+          <el-table-column :sortable="'custom'" prop="createAt" label="创建时间" align="center">
             <template slot-scope="scope">
               {{ scope.row.createAt | formatDate }}
             </template>
-          </el-table-column> -->
-          <el-table-column prop="updateAt" label="更新时间" align="center">
+          </el-table-column>
+          <el-table-column :sortable="'custom'" prop="updateAt" label="更新时间" align="center">
             <template slot-scope="scope">
               {{ scope.row.updateAt | formatDate }}
             </template>
@@ -91,21 +87,12 @@
 
     <!-- 对话框 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="48%" top="7vh">
-      <el-form ref="goodsCategoryForm" :model="goodsCategoryTemp" :rules="rules" class="form-add" label-width="100px" style="width: 100%; padding-left:10px;padding-right:10px">
-        <el-form-item label="类别名称" prop="name">
-          <el-input v-model="goodsCategoryTemp.name" style="width:100%"/>
+      <el-form ref="contactUserForm" :model="contactUserTemp" :rules="rules" class="form-add" label-width="100px" style="width: 100%; padding-left:10px;padding-right:10px">
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="contactUserTemp.username" style="width:100%"/>
         </el-form-item>
-        <el-form-item label="首页展示" prop="shipFree">
-          <el-switch
-            v-model="goodsCategoryTemp.showIndex"
-            active-color="#13ce66"
-            inactive-color="#ff4949"/>
-        </el-form-item>
-        <el-form-item v-show="goodsCategoryTemp.showIndex" label="展示图片" prop="image">
-          <ImageUpload v-model="goodsCategoryTemp.image" style="width:100%"/>
-        </el-form-item>
-        <el-form-item label="类别描述" prop="desc" >
-          <el-input v-model="goodsCategoryTemp.remark" style="width:100%"/>
+        <el-form-item label="手机" prop="phone">
+          <el-input v-model="contactUserTemp.phone" style="width:100%"/>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -114,13 +101,13 @@
         <el-button v-else :loading="buttonLoading" type="primary" @click="updateData">{{ $t('table.confirm') }}</el-button>
       </span>
     </el-dialog>
-   <!-- <el-dialog :visible.sync="dialogDetailVisible" title="详情" width="40%" top="7vh" style="width: 100%; padding-left:10px;padding-right:10px">
+    <el-dialog :visible.sync="dialogDetailVisible" title="详情" width="40%" top="7vh" style="width: 100%; padding-left:10px;padding-right:10px">
       <el-form ref="form" :model="showData" label-width="90px" label-position="left" style="padding-left: 20px">
-        <el-form-item label="类别名称">
-          <span> {{ showData.name }}</span>
+        <el-form-item label="用户名">
+          <span> {{ showData.username }}</span>
         </el-form-item >
-        <el-form-item label="类别描述">
-          <span> {{ showData.desc }}</span>
+        <el-form-item label="手机">
+          <span> {{ showData.phone }}</span>
         </el-form-item >
         <el-form-item label="创建时间">
           <span>{{ showData.createAt | formatDate }}</span>
@@ -129,19 +116,25 @@
           <span>{{ showData.updateAt | formatDate }}</span>
         </el-form-item>
       </el-form>
-    </el-dialog> -->
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listGoodsCategory, createGoodsCategory, updateGoodsCategory, deleteGoodsCategory } from '@/api/GoodsCategoryApi'
+import { listContactUser, createContactUser, updateContactUser, deleteContactUser } from '@/api/ContactUserApi'
 import waves from '@/directive/waves'
 import { formatDate } from '@/utils'
 
 export default {
-  name: 'GoodsCategory',
+  name: 'ContactUser',
   directives: {
     waves
+  },
+  props: {
+    userId: {
+      type: Number,
+      default: undefined
+    }
   },
   data() {
     return {
@@ -154,26 +147,26 @@ export default {
       total: null,
       dialogStatus: '',
       textMap: {
-        update: '编辑商品分类',
-        create: '添加商品分类'
+        update: '编辑用户联系人',
+        create: '添加用户联系人'
       },
       showData: '',
       listParams: {
         page: 1,
         size: 10,
-        'name.contains': undefined
+        'username.equals': undefined,
+        'userId.equals': this.userId
       },
       data: [],
-      goodsCategoryTemp: {
-        name: undefined,
-        remark: undefined,
-        image: undefined,
-        showIndex: false,
-        indexLayoutId: undefined,
+      contactUserTemp: {
+        username: undefined,
+        phone: undefined,
         id: undefined
       },
       rules: {
-        name: [{ required: true, message: '类别名称为必须参数', trigger: 'change' }]
+        username: [{ required: true, message: '用户名为必须参数', trigger: 'change' }],
+        phone: [{ required: true, message: '手机为必须参数', trigger: 'change' }]
+
       }
     }
   },
@@ -185,11 +178,13 @@ export default {
       const params = {
         page: this.listParams.page,
         size: this.listParams.size,
-        'name.equals': this.listParams['name.equals'] === '' ? undefined : this.listParams['name.equals'],
+        'userId.equals': this.listParams['userId.equals'] === '' ? undefined : this.listParams['userId.equals'],
+        'username.equals': this.listParams['username.equals'] === '' ? undefined : this.listParams['username.equals'],
+        'phone.equals': this.listParams['phone.equals'] === '' ? undefined : this.listParams['phone.equals'],
         'sort': this.listParams['sort'] === '' ? null : this.listParams['sort']
       }
       this.loading = true
-      listGoodsCategory(params).then(response => {
+      listContactUser(params).then(response => {
         this.loading = false
         this.data = response.data.data
         this.total = response.data.totalSize
@@ -210,29 +205,26 @@ export default {
       this.showData = row
       this.dialogDetailVisible = true
     },
-    resetgoodsCategoryTemp() {
-      this.goodsCategoryTemp = {
-        name: undefined,
-        remark: undefined,
-        image: undefined,
-        showIndex: false,
-        indexLayoutId: undefined,
+    resetcontactUserTemp() {
+      this.contactUserTemp = {
+        username: undefined,
+        phone: undefined,
         id: undefined
       }
     },
     handleCreate() {
-      this.resetgoodsCategoryTemp()
+      this.resetcontactUserTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.$nextTick(() => {
-        this.$refs['goodsCategoryForm'].clearValidate()
+        this.$refs['contactUserForm'].clearValidate()
       })
     },
     createData() {
-      this.$refs['goodsCategoryForm'].validate((valid) => {
+      this.$refs['contactUserForm'].validate((valid) => {
         if (valid) {
           this.buttonLoading = true
-          createGoodsCategory(this.goodsCategoryTemp).then(response => {
+          createContactUser(this.contactUserTemp).then(response => {
             this.buttonLoading = false
             if (response.data.code === -1) {
               this.$message({
@@ -261,18 +253,18 @@ export default {
       })
     },
     handleUpdate(row) {
-      Object.assign(this.goodsCategoryTemp, row)
+      Object.assign(this.contactUserTemp, row)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
-        this.$refs['goodsCategoryForm'].clearValidate()
+        this.$refs['contactUserForm'].clearValidate()
       })
     },
     updateData() {
-      this.$refs['goodsCategoryForm'].validate((valid) => {
+      this.$refs['contactUserForm'].validate((valid) => {
         if (valid) {
           this.buttonLoading = true
-          updateGoodsCategory(this.goodsCategoryTemp.id, this.goodsCategoryTemp).then(response => {
+          updateContactUser(this.contactUserTemp.id, this.contactUserTemp).then(response => {
             this.buttonLoading = false
             if (response.data.code === -1) {
               this.$message({
@@ -301,12 +293,12 @@ export default {
       })
     },
     deleteData(id) {
-      this.$confirm('确认删除该商品分类, 是否继续?', '提示', {
+      this.$confirm('确认删除该用户联系人, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteGoodsCategory(id).then(response => {
+        deleteContactUser(id).then(response => {
           if (response.data.code === -1) {
             this.$message({
               title: '失败',
@@ -352,24 +344,24 @@ export default {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
         const tHeader = ['记录编号',
-          '类别名称',
-          '类别描述',
+          '用户名',
+          '手机',
           '创建时间',
           '更新时间']
         const filterVal = ['id',
-          'name',
-          'desc',
+          'username',
+          'phone',
           'createAt',
           'updateAt']
         const params = Object.assign({}, this.listParams)
         params.size = this.total
-        listGoodsCategory(params).then(response => {
+        listContactUser(params).then(response => {
           this.exportList = response.data.data
           const data = this.formatJson(filterVal, this.exportList)
           excel.export_json_to_excel({
             header: tHeader,
             data,
-            filename: '商品分类数据表格'
+            filename: '用户联系人数据表格'
           })
           this.downloadLoading = false
         })
